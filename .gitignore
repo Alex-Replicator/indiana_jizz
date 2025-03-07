@@ -1,0 +1,22 @@
+# Игнорировать файл .env с реальными настройками
+.env
+
+# Игнорировать логи
+services/nginx/logs/*
+!services/nginx/logs/.gitkeep
+
+# Игнорировать временные файлы
+*.tmp
+*.log
+*.swp
+.DS_Store
+Thumbs.db
+
+# Игнорировать файлы IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Игнорировать кэш и временные файлы PHP
+*.php~
+*.phpc 
