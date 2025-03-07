@@ -57,9 +57,11 @@ RUN { \
 # Установка Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Создание директории для логов
+# Создание директорий для логов
 RUN mkdir -p /var/log/php && \
-    chmod 777 /var/log/php
+    touch /var/log/php/php_errors.log && \
+    touch /var/log/php/php-fpm-slow.log && \
+    chmod -R 777 /var/log/php
 
 # Настройка рабочей директории
 WORKDIR /var/www/html
