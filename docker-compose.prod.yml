@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Nginx - продакшн настройки
+  nginx:
+    restart: always
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # PHP-FPM - продакшн настройки
+  php:
+    restart: always
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # MySQL - продакшн настройки
+  mysql:
+    restart: always
+    environment:
+      TZ: ${TZ:-Europe/Moscow}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # PHPMyAdmin - в продакшн обычно отключается или защищается
+  phpmyadmin:
+    restart: always
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Дополнительная защита - доступ только через VPN или локальную сеть
+    # Раскомментируйте следующие строки для ограничения доступа
+    # networks:
+    #   - internal_network_only 

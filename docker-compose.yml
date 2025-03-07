@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Nginx - веб-сервер
+  nginx:
+    image: nginx:1.24-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT}:80"
+    volumes:
+      - ${SOURCE_CODE_PATH}:/var/www/html
+      - ./services/nginx/conf.d:/etc/nginx/conf.d
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./services/nginx/logs:/var/log/nginx
+    depends_on:
+      - php
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    deploy:
+      resources:
+        limits:
+          memory: ${NGINX_MEMORY_LIMIT:-256M}
+          cpus: ${NGINX_CPU_LIMIT:-0.25}
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+
+  # PHP-FPM - обработчик PHP
+  php:
+    build:
+      context: ./services/php
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.1}
+    container_name: ${COMPOSE_PROJECT_NAME}_php
+    restart: unless-stopped
+    volumes:
+      - ${SOURCE_CODE_PATH}:/var/www/html
+      - ./services/php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./services/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    depends_on:
+      - mysql
+    deploy:
+      resources:
+        limits:
+          memory: ${PHP_MEMORY_LIMIT_CONTAINER:-512M}
+          cpus: ${PHP_CPU_LIMIT:-0.5}
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=${TZ:-Europe/Moscow}
+
+  # MySQL - база данных
+  mysql:
+    image: mysql:8.0
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${TZ:-Europe/Moscow}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./services/mysql/init:/docker-entrypoint-initdb.d
+      - ./services/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    deploy:
+      resources:
+        limits:
+          memory: ${MYSQL_MEMORY_LIMIT:-512M}
+          cpus: ${MYSQL_CPU_LIMIT:-0.5}
+
+  # PHPMyAdmin - панель управления MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.1
+    container_name: ${COMPOSE_PROJECT_NAME}_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "${PMA_PORT}:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - UPLOAD_LIMIT=${PHP_UPLOAD_MAX_FILESIZE:-20M}
+      - TZ=${TZ:-Europe/Moscow}
+    depends_on:
+      - mysql
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    deploy:
+      resources:
+        limits:
+          memory: ${PMA_MEMORY_LIMIT:-256M}
+          cpus: ${PMA_CPU_LIMIT:-0.25}
+
+networks:
+  indiana_jizz_network:
+    name: ${COMPOSE_PROJECT_NAME}_network
+    driver: bridge
+
+volumes:
+  mysql_data:
+    name: ${COMPOSE_PROJECT_NAME}_mysql_data 
