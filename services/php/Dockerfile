@@ -57,13 +57,18 @@ RUN { \
 # Установка Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Создание директории для логов
+RUN mkdir -p /var/log/php && \
+    chmod 777 /var/log/php
+
 # Настройка рабочей директории
 WORKDIR /var/www/html
 
 # Установка пользователя и прав
 RUN addgroup -g 1000 www && \
     adduser -u 1000 -G www -s /bin/sh -D www && \
-    chown -R www:www /var/www
+    chown -R www:www /var/www && \
+    chown -R www:www /var/log/php
 
 # Запуск от пользователя www
 USER www
