@@ -1,31 +1,6 @@
 <div align="center">
 
-<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
-  <!-- Фон -->
-  <rect width="500" height="300" fill="#f9f9f9" rx="15" ry="15" />
-  
-  <!-- Шляпа в стиле Индианы Джонса -->
-  <path d="M100,120 C100,100 150,80 250,80 C350,80 400,100 400,120 L420,130 C420,140 400,150 390,150 L110,150 C100,150 80,140 80,130 Z" fill="#654321" />
-  <path d="M110,150 L130,210 L370,210 L390,150 Z" fill="#8B4513" />
-  <ellipse cx="250" cy="80" rx="150" ry="20" fill="#8B5A2B" />
-  
-  <!-- Кнут -->
-  <path d="M370,160 Q400,140 420,110 Q430,100 435,85" fill="none" stroke="#000" stroke-width="3" />
-  
-  <!-- Контейнеры Docker -->
-  <rect x="190" y="170" width="40" height="30" fill="#0db7ed" />
-  <rect x="235" y="170" width="40" height="30" fill="#0db7ed" />
-  <rect x="280" y="170" width="40" height="30" fill="#0db7ed" />
-  <rect x="190" y="140" width="40" height="30" fill="#0db7ed" />
-  <rect x="235" y="140" width="40" height="30" fill="#0db7ed" />
-  <rect x="235" y="110" width="40" height="30" fill="#0db7ed" />
-  
-  <!-- Текст Логотипа -->
-  <text x="250" y="250" font-family="Impact, sans-serif" font-size="48" fill="#654321" text-anchor="middle">INDIANA JIZZ</text>
-  <text x="250" y="275" font-family="Arial, sans-serif" font-size="16" fill="#555" text-anchor="middle">Docker-окружение для веб-разработки</text>
-</svg>
-
-<h1>Docker-окружение для веб-разработки</h1>
+<h1> 🥛 Docker-окружение для веб-разработки</h1>
 
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
@@ -211,6 +186,6 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 <details>
 <summary>🎨 О названии проекта</summary>
 <br>
-Indiana Jizz - отсылка к культовому приключенческому герою, который так же, как и этот проект, помогает исследователям достигать своих целей с минимальными сложностями.
+Indiana Jizz - отсылка к Азазину. Фанаты сашкинса и крабов поймут
 </details>
 </div> 
