@@ -12,7 +12,8 @@ RUN apk add --no-cache \
     icu-libs \
     libxml2 \
     oniguruma \
-    mysql-client
+    mysql-client \
+    libmemcached-libs
 
 # Установка временных зависимостей для сборки расширений
 RUN apk add --no-cache --virtual .build-deps \
@@ -24,7 +25,10 @@ RUN apk add --no-cache --virtual .build-deps \
     libzip-dev \
     icu-dev \
     libxml2-dev \
-    oniguruma-dev
+    oniguruma-dev \
+    libmemcached-dev \
+    zlib-dev \
+    cyrus-sasl-dev
 
 # Установка и настройка основных расширений PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
@@ -39,7 +43,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         mbstring \
         opcache \
         xml \
-        exif \
+        exif
+
+# Установка расширения Memcached для PHP
+RUN pecl install memcached \
+    && docker-php-ext-enable memcached \
     # Очистка временных файлов
     && apk del .build-deps \
     && rm -rf /tmp/*

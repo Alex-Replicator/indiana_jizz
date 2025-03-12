@@ -49,4 +49,15 @@ services:
     # Дополнительная защита - доступ только через VPN или локальную сеть
     # Раскомментируйте следующие строки для ограничения доступа
     # networks:
-    #   - internal_network_only 
+    #   - internal_network_only
+    
+  # Memcached - продакшн настройки
+  memcached:
+    restart: always
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3" 

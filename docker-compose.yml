@@ -17,11 +17,6 @@ services:
       - php
     networks:
       - ${COMPOSE_PROJECT_NAME}_network
-    deploy:
-      resources:
-        limits:
-          memory: ${NGINX_MEMORY_LIMIT:-256M}
-          cpus: ${NGINX_CPU_LIMIT:-0.25}
     environment:
       - TZ=${TZ:-Europe/Moscow}
 
@@ -41,16 +36,14 @@ services:
       - ${COMPOSE_PROJECT_NAME}_network
     depends_on:
       - mysql
-    deploy:
-      resources:
-        limits:
-          memory: ${PHP_MEMORY_LIMIT_CONTAINER:-512M}
-          cpus: ${PHP_CPU_LIMIT:-0.5}
+      - memcached
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MEMCACHED_HOST=memcached
+      - MEMCACHED_PORT=11211
       - TZ=${TZ:-Europe/Moscow}
 
   # MySQL - база данных
@@ -74,11 +67,6 @@ services:
       - ./services/mysql/logs:/var/log/mysql
     networks:
       - ${COMPOSE_PROJECT_NAME}_network
-    deploy:
-      resources:
-        limits:
-          memory: ${MYSQL_MEMORY_LIMIT:-512M}
-          cpus: ${MYSQL_CPU_LIMIT:-0.5}
 
   # PHPMyAdmin - панель управления MySQL
   phpmyadmin:
@@ -97,14 +85,22 @@ services:
       - mysql
     networks:
       - ${COMPOSE_PROJECT_NAME}_network
-    deploy:
-      resources:
-        limits:
-          memory: ${PMA_MEMORY_LIMIT:-256M}
-          cpus: ${PMA_CPU_LIMIT:-0.25}
+
+  # Memcached - сервис кеширования
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}_memcached
+    restart: unless-stopped
+    ports:
+      - "${MEMCACHED_PORT:-11211}:11211"
+    command: memcached -m ${MEMCACHED_MEMORY:-128}
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    environment:
+      - TZ=${TZ:-Europe/Moscow}
 
 networks:
-  indiana_jizz_network:
+  blog_network:
     name: ${COMPOSE_PROJECT_NAME}_network
     driver: bridge
 
